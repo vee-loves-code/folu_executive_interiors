@@ -45,11 +45,13 @@ class DevHandler(api_server.Handler, SimpleHTTPRequestHandler):
     def do_GET(self):
         if self._is_api():
             return api_server.Handler.do_GET(self)
-        # Netlify serves clean URLs (e.g. /admin -> admin.html) automatically
-        # in production; replicate that here for local parity.
+        # netlify.toml maps these clean URLs to their .html files in
+        # production; replicate that here for local parity.
         path, _, query = self.path.partition("?")
-        if path in ("/admin", "/admin/"):
-            self.path = "/admin.html" + (("?" + query) if query else "")
+        clean_urls = {"/admin": "/admin.html", "/admin/": "/admin.html",
+                      "/dashboard": "/dashboard.html", "/dashboard/": "/dashboard.html"}
+        if path in clean_urls:
+            self.path = clean_urls[path] + (("?" + query) if query else "")
         return SimpleHTTPRequestHandler.do_GET(self)
 
     def do_POST(self):

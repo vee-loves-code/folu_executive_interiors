@@ -1,17 +1,16 @@
-// Folu Executive Interior — admin dashboard
+// Folu Executive Interior — consultations dashboard (requires sign in)
 
 const STATUSES = ["New", "Contacted", "Booked", "Closed"];
 const AUTH_KEY = "folu_admin_auth";
 
 let allRecords = [];
-let authHeader = sessionStorage.getItem(AUTH_KEY) || null;
+const authHeader = sessionStorage.getItem(AUTH_KEY);
 
-const loginView = document.getElementById("loginView");
-const dashboardView = document.getElementById("dashboardView");
-const loginForm = document.getElementById("loginForm");
-const loginError = document.getElementById("loginError");
+if (!authHeader) {
+  window.location.replace("admin.html");
+}
+
 const logoutBtn = document.getElementById("logoutBtn");
-
 const tableBody = document.getElementById("adminTableBody");
 const emptyState = document.getElementById("adminEmpty");
 const tableWrap = document.querySelector(".admin-table-wrap");
@@ -23,19 +22,9 @@ function authedFetch(url, options = {}) {
   return fetch(url, { ...options, headers });
 }
 
-function showLogin(message) {
-  authHeader = null;
+function goToLogin() {
   sessionStorage.removeItem(AUTH_KEY);
-  loginView.hidden = false;
-  dashboardView.hidden = true;
-  logoutBtn.hidden = true;
-  loginError.textContent = message || "";
-}
-
-function showDashboard() {
-  loginView.hidden = true;
-  dashboardView.hidden = false;
-  logoutBtn.hidden = false;
+  window.location.href = "admin.html";
 }
 
 function formatDate(iso) {
@@ -87,7 +76,7 @@ function render(records) {
     select.addEventListener("change", () => updateStatus(rec.id, select.value, select));
     statusCell.appendChild(select);
 
-    tr.querySelector(".delete-btn").addEventListener("click", () => removeRecord(rec.id, tr));
+    tr.querySelector(".delete-btn").addEventListener("click", () => removeRecord(rec.id));
 
     tableBody.appendChild(tr);
   });
@@ -108,7 +97,7 @@ function updateStats(records) {
 async function loadRecords() {
   try {
     const res = await authedFetch("/api/consultations");
-    if (res.status === 401) return showLogin("Session expired — please sign in again.");
+    if (res.status === 401) return goToLogin();
     if (!res.ok) throw new Error("Failed to load");
     allRecords = await res.json();
     updateStats(allRecords);
@@ -138,54 +127,23 @@ async function updateStatus(id, status, selectEl) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ status })
   });
-  if (res.status === 401) return showLogin("Session expired — please sign in again.");
+  if (res.status === 401) return goToLogin();
   const rec = allRecords.find(r => r.id === id);
   if (rec) rec.status = status;
   updateStats(allRecords);
 }
 
-async function removeRecord(id, rowEl) {
+async function removeRecord(id) {
   if (!confirm("Remove this consultation request?")) return;
   const res = await authedFetch(`/api/consultations/${id}`, { method: "DELETE" });
-  if (res.status === 401) return showLogin("Session expired — please sign in again.");
+  if (res.status === 401) return goToLogin();
   allRecords = allRecords.filter(r => r.id !== id);
   updateStats(allRecords);
   applyFilter();
 }
 
-loginForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const user = loginForm.username.value;
-  const pass = loginForm.password.value;
-  const candidate = "Basic " + btoa(`${user}:${pass}`);
-
-  loginError.textContent = "Signing in…";
-  const res = await fetch("/api/consultations", { headers: { Authorization: candidate } });
-
-  if (res.status === 401) {
-    loginError.textContent = "Incorrect username or password.";
-    return;
-  }
-  if (!res.ok) {
-    loginError.textContent = "Could not reach the server — try again.";
-    return;
-  }
-
-  authHeader = candidate;
-  sessionStorage.setItem(AUTH_KEY, candidate);
-  loginForm.reset();
-  showDashboard();
-  loadRecords();
-});
-
-logoutBtn.addEventListener("click", () => showLogin());
-
+logoutBtn.addEventListener("click", goToLogin);
 refreshBtn.addEventListener("click", loadRecords);
 searchInput.addEventListener("input", applyFilter);
 
-if (authHeader) {
-  showDashboard();
-  loadRecords();
-} else {
-  showLogin();
-}
+if (authHeader) loadRecords();
