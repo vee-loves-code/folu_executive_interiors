@@ -16,6 +16,13 @@
   color: var(--color-accent-soft);
 }
 
+/* .btn-outline defaults to dark text/border, invisible on this dark
+   header — lighten it here specifically. */
+.admin-logout {
+  color: #f1ebe1; border-color: rgba(255,255,255,.4);
+}
+.admin-logout:hover { background: #f1ebe1; color: var(--color-ink); border-color: #f1ebe1; }
+
 .admin-main { max-width: 1240px; margin: 0 auto; padding: 48px 32px 100px; }
 
 /* ---------- Login ---------- */
