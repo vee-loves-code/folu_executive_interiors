@@ -5,12 +5,8 @@
 # Consultation form + admin dashboard call this same-origin path;
 # Netlify proxies it straight through to the Render-hosted API so the
 # browser only ever talks to foluexecutiveinteriors.netlify.app.
-#
-# Replace YOUR-RENDER-SERVICE with the real onrender.com subdomain
-# once the Render service exists (Render → your service → the URL
-# shown at the top of the dashboard).
 [[redirects]]
   from = "/api/*"
-  to = "https://YOUR-RENDER-SERVICE.onrender.com/api/:splat"
+  to = "https://folu-executive-interior-api.onrender.com/api/:splat"
   status = 200
   force = true
