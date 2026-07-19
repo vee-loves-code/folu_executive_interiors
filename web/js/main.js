@@ -88,9 +88,27 @@ document.addEventListener('DOMContentLoaded', () => {
   /* Consultation form — saved to the admin dashboard */
   const contactForm = document.getElementById('contactForm');
   const contactNote = document.getElementById('contactNote');
+  const submitBtn = contactForm?.querySelector('button[type="submit"]');
+  const submitBtnDefaultText = submitBtn?.textContent;
+  let resetTimer;
+
+  function setButtonState(state, text) {
+    if (!submitBtn) return;
+    submitBtn.classList.remove('is-sending', 'is-success', 'is-error');
+    if (state) submitBtn.classList.add(state);
+    submitBtn.textContent = text;
+  }
+
+  function setNote(state, text) {
+    if (!contactNote) return;
+    contactNote.classList.remove('is-success', 'is-error');
+    if (state) contactNote.classList.add(state);
+    contactNote.textContent = text;
+  }
+
   contactForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const submitBtn = contactForm.querySelector('button[type="submit"]');
+    clearTimeout(resetTimer);
     const payload = {
       name: contactForm.name.value,
       phone: contactForm.phone.value,
@@ -99,7 +117,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     submitBtn.disabled = true;
-    if (contactNote) contactNote.textContent = 'Sending…';
+    setButtonState('is-sending', 'Sending…');
+    setNote(null, '');
 
     try {
       const res = await fetch('/api/consultations', {
@@ -108,12 +127,24 @@ document.addEventListener('DOMContentLoaded', () => {
         body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error('Request failed');
-      if (contactNote) contactNote.textContent = 'Thank you — our design team will be in touch shortly.';
+
+      setButtonState('is-success', 'Message Sent ✓');
+      setNote('is-success', 'Thank you — our design team will be in touch shortly.');
       contactForm.reset();
+      submitBtn.disabled = true;
+
+      resetTimer = setTimeout(() => {
+        setButtonState(null, submitBtnDefaultText);
+        submitBtn.disabled = false;
+      }, 4000);
     } catch (err) {
-      if (contactNote) contactNote.textContent = 'Something went wrong — please call or WhatsApp us directly.';
-    } finally {
+      setButtonState('is-error', 'Try Again');
+      setNote('is-error', 'Something went wrong — please call or WhatsApp us directly.');
       submitBtn.disabled = false;
+
+      resetTimer = setTimeout(() => {
+        setButtonState(null, submitBtnDefaultText);
+      }, 4000);
     }
   });
 

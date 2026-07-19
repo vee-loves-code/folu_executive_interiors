@@ -123,6 +123,29 @@ em { font-style: italic; color: var(--color-accent); }
 .btn-sm { padding: 10px 20px; font-size: 0.7rem; }
 .btn-block { width: 100%; }
 
+/* ---------- Submit button states (form feedback) ---------- */
+.btn.is-sending {
+  background: var(--color-muted); border-color: var(--color-muted);
+  color: #fff; cursor: wait; opacity: .85;
+}
+.btn.is-success {
+  background: #2f7d4f; border-color: #2f7d4f; color: #fff;
+}
+.btn.is-error {
+  background: #b0413e; border-color: #b0413e; color: #fff;
+  animation: btnShake .4s ease;
+}
+@keyframes btnShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+.form-note {
+  font-size: 0.86rem; font-weight: 500; margin-top: 12px; min-height: 1.2em;
+}
+.form-note.is-success { color: #2f7d4f; }
+.form-note.is-error { color: #b0413e; }
+
 /* ---------- Announcement bar ---------- */
 .announce {
   background: var(--color-ink);
