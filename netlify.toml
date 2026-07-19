@@ -1,5 +1,4 @@
 [build]
-  base = "web"
   publish = "web"
 
 # Consultation form + admin dashboard call this same-origin path;
@@ -10,3 +9,9 @@
   to = "https://folu-executive-interior-api.onrender.com/api/:splat"
   status = 200
   force = true
+
+# Explicit clean-URL mapping — don't rely on Netlify guessing /admin -> admin.html.
+[[redirects]]
+  from = "/admin"
+  to = "/admin.html"
+  status = 200
