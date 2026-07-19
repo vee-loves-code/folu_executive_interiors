@@ -1,0 +1,7 @@
+# Consultation data is runtime state, not source — never commit real
+# customer submissions. The API creates this file itself on first write.
+server/data/consultations.json
+
+.DS_Store
+__pycache__/
+*.pyc

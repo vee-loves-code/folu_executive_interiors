@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin — Folu Executive Interior</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin-body">
+
+<header class="admin-header">
+  <div class="admin-header-inner">
+    <a href="index.html" class="logo">
+      <span class="logo-mark">F</span>
+      <span class="logo-text">Folu <em>Executive</em> Interior</span>
+    </a>
+    <span class="admin-tag">Admin · Consultations</span>
+    <button class="btn btn-outline btn-sm admin-logout" id="logoutBtn" hidden>Log out</button>
+  </div>
+</header>
+
+<main class="admin-main">
+
+  <section class="admin-login" id="loginView">
+    <form class="admin-login-form" id="loginForm">
+      <h2>Admin Sign In</h2>
+      <p class="admin-login-sub">Enter your dashboard credentials to view consultation requests.</p>
+      <input type="text" name="username" placeholder="Username" autocomplete="username" required>
+      <input type="password" name="password" placeholder="Password" autocomplete="current-password" required>
+      <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+      <p class="admin-login-error" id="loginError"></p>
+    </form>
+  </section>
+
+  <div class="admin-dashboard" id="dashboardView" hidden>
+    <div class="admin-toolbar">
+      <div class="admin-stats" id="adminStats">
+        <div class="stat"><span class="stat-num" id="statTotal">0</span><span class="stat-label">Total</span></div>
+        <div class="stat"><span class="stat-num" id="statNew">0</span><span class="stat-label">New</span></div>
+        <div class="stat"><span class="stat-num" id="statBooked">0</span><span class="stat-label">Booked</span></div>
+      </div>
+      <div class="admin-actions">
+        <input type="search" id="searchInput" placeholder="Search by name, phone, email…">
+        <button class="btn btn-outline btn-sm" id="refreshBtn">Refresh</button>
+      </div>
+    </div>
+
+    <div class="admin-table-wrap">
+      <table class="admin-table" id="adminTable">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Contact</th>
+            <th>Message</th>
+            <th>Submitted</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="adminTableBody">
+        </tbody>
+      </table>
+      <p class="admin-empty" id="adminEmpty">No consultation requests yet.</p>
+    </div>
+  </div>
+</main>
+
+<script src="js/admin.js"></script>
+</body>
+</html>

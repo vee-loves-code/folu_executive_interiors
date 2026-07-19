@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 5500);
   }
 
-  /* Forms — front-end only confirmation (no backend wired up yet) */
+  /* Newsletter forms — front-end only confirmation (no backend wired up) */
   const handleFormSubmit = (formId, noteId, message) => {
     const form = document.getElementById(formId);
     const note = document.getElementById(noteId);
@@ -80,10 +80,41 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
   handleFormSubmit('ctaForm', 'formNote', 'Thank you — you are on the list.');
-  handleFormSubmit('contactForm', 'contactNote', 'Thank you — our design team will be in touch shortly.');
   document.getElementById('footerForm')?.addEventListener('submit', (e) => {
     e.preventDefault();
     e.target.reset();
+  });
+
+  /* Consultation form — saved to the admin dashboard */
+  const contactForm = document.getElementById('contactForm');
+  const contactNote = document.getElementById('contactNote');
+  contactForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const submitBtn = contactForm.querySelector('button[type="submit"]');
+    const payload = {
+      name: contactForm.name.value,
+      phone: contactForm.phone.value,
+      email: contactForm.email.value,
+      message: contactForm.message.value,
+    };
+
+    submitBtn.disabled = true;
+    if (contactNote) contactNote.textContent = 'Sending…';
+
+    try {
+      const res = await fetch('/api/consultations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error('Request failed');
+      if (contactNote) contactNote.textContent = 'Thank you — our design team will be in touch shortly.';
+      contactForm.reset();
+    } catch (err) {
+      if (contactNote) contactNote.textContent = 'Something went wrong — please call or WhatsApp us directly.';
+    } finally {
+      submitBtn.disabled = false;
+    }
   });
 
 });

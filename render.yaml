@@ -1,0 +1,20 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+# In Render: New + -> Blueprint -> pick this repo, it reads this file.
+# You'll still need to fill in FOLU_ADMIN_USER / FOLU_ADMIN_PASS in the
+# Render dashboard yourself (marked sync: false so they're never stored in git).
+
+services:
+  - type: web
+    name: folu-executive-interior-api
+    runtime: python
+    rootDir: server
+    plan: free
+    buildCommand: ""
+    startCommand: "python3 server.py"
+    envVars:
+      - key: FOLU_ADMIN_USER
+        sync: false
+      - key: FOLU_ADMIN_PASS
+        sync: false
+      - key: FOLU_ALLOWED_ORIGIN
+        value: "https://foluexecutiveinteriors.netlify.app"
